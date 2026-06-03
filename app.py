@@ -1,35 +1,32 @@
 import streamlit as st
+import google.generativeai as genai
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+
+api_key = os.getenv("GEMINI_API_KEY")
+
+genai.configure(api_key=api_key)
+
+model = genai.GenerativeModel("gemini-2.5-flash")
+
 
 st.title("AI Study Assistant")
 
-topic = st.text_input("Enter Topic")
+topic = st.text_input("Enter a Topic")
 
 if st.button("Generate Notes"):
 
-    if topic.lower() == "python":
+    prompt = f"""
+    Explain {topic} for a beginner.
 
-        st.subheader("Python")
+    Also provide:
+    1. Short Explanation
+    2. Key Points
+    3. Interview Questions
+    """
 
-        st.write("Python is a popular programming language used in AI, Data Science, and Web Development.")
+    response = model.generate_content(prompt)
 
-    elif topic.lower() == "machine learning":
-
-        st.subheader("Machine Learning")
-
-        st.write("Machine Learning is a branch of Artificial Intelligence that allows computers to learn from data.")
-
-    elif topic.lower() == "sql":
-
-        st.subheader("SQL")
-
-        st.write("SQL is used to store, retrieve, and manage data in databases.")
-
-    elif topic.lower() == "artificial intelligence":
-
-        st.subheader("Artificial Intelligence")
-
-        st.write("AI enables machines to perform tasks that normally require human intelligence.")
-
-    else:
-
-        st.write("Sorry, notes are not available for this topic.")
+    st.write(response.text)
